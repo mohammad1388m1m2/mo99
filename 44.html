@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شناسنامه اتمی</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 20px;
+        }
+        #element-info {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: white;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>شناسنامه اتمی</h1>
+<input type="text" id="search" placeholder="نام، عدد اتمی یا نماد شیمیایی را وارد کنید..." />
+<button onclick="searchElement()">جستجو</button>
+
+<div id="element-info">
+    <h2>اطلاعات عنصر</h2>
+    <p id="name"></p>
+    <p id="symbol"></p>
+    <p id="atomic-number"></p>
+    <p id="atomic-weight"></p>
+    <p id="isotopes"></p>
+</div>
+
+<script>
+    const elements = [
+        { name: "هیدروژن", symbol: "H", atomicNumber: 1, atomicWeight: 1.008, isotopes: ["H-1", "H-2", "H-3"] },
+        { name: "هلیم", symbol: "He", atomicNumber: 2, atomicWeight: 4.0026, isotopes: ["He-3", "He-4"] },
+        { name: "لیتیم", symbol: "Li", atomicNumber: 3, atomicWeight: 6.94, isotopes: ["Li-6", "Li-7"] },
+        { name: "بریلیم", symbol: "Be", atomicNumber: 4, atomicWeight: 9.0122, isotopes: ["Be-9"] },
+        { name: "بور", symbol: "B", atomicNumber: 5, atomicWeight: 10.81, isotopes: ["B-10", "B-11"] },
+        { name: "کربن", symbol: "C", atomicNumber: 6, atomicWeight: 12.011, isotopes: ["C-12", "C-13", "C-14"] },
+        { name: "نیتروژن", symbol: "N", atomicNumber: 7, atomicWeight: 14.007, isotopes: ["N-14", "N-15"] },
+        { name: "اکسیژن", symbol: "O", atomicNumber: 8, atomicWeight: 15.999, isotopes: ["O-16", "O-17", "O-18"] },
+        { name: "فلوئور", symbol: "F", atomicNumber: 9, atomicWeight: 18.998, isotopes: ["F-19"] },
+        { name: "نئون", symbol: "Ne", atomicNumber: 10, atomicWeight: 20.180, isotopes: ["Ne-20", "Ne-21", "Ne-22"] },
+        { name: "سدیم", symbol: "Na", atomicNumber: 11, atomicWeight: 22.990, isotopes: ["Na-23"] },
+        { name: "منیزیم", symbol: "Mg", atomicNumber: 12, atomicWeight: 24.305, isotopes: ["Mg-24", "Mg-25", "Mg-26"] },
+        { name: "آلومینیوم", symbol: "Al", atomicNumber: 13, atomicWeight: 26.982, isotopes: ["Al-27"] },
+        { name: "سیلیسیم", symbol: "Si", atomicNumber: 14, atomicWeight: 28.085, isotopes: ["Si-28", "Si-29", "Si-30"] },
+        { name: "فسفر", symbol: "P", atomicNumber: 15, atomicWeight: 30.974, isotopes: ["P-31"] },
+        { name: "گوگرد", symbol: "S", atomicNumber: 16, atomicWeight: 32.06, isotopes: ["S-32", "S-33", "S-34", "S-36"] },
+        { name: "کلر", symbol: "Cl", atomicNumber: 17, atomicWeight: 35.45, isotopes: ["Cl-35", "Cl-37"] },
+        { name: "آرگون", symbol: "Ar", atomicNumber: 18, atomicWeight: 39.948, isotopes: ["Ar-36", "Ar-38", "Ar-40"] },
+        { name: "پتاسیم", symbol: "K", atomicNumber: 19, atomicWeight: 39.098, isotopes: ["K-39", "K-40", "K-41"] },
+        { name: "کلسیم", symbol: "Ca", atomicNumber: 20, atomicWeight: 40.078, isotopes: ["Ca-40", "Ca-42", "Ca-43", "Ca-44", "Ca-46", "Ca-48"] },
+        { name: "اسکاندیم", symbol: "Sc", atomicNumber: 21, atomicWeight: 44.956, isotopes: ["Sc-45"] },
+        { name: "تیتانیوم", symbol: "Ti", atomicNumber: 22, atomicWeight: 47.867, isotopes: ["Ti-46", "Ti-47", "Ti-48", "Ti-49", "Ti-50"] },
+        { name: "وانادیوم", symbol: "V", atomicNumber: 23, atomicWeight: 50.941, isotopes: ["V-50", "V-51"] },
+        { name: "کروم", symbol: "Cr", atomicNumber: 24, atomicWeight: 51.996, isotopes: ["Cr-50", "Cr-52", "Cr-53", "Cr-54"] },
+        { name: "منگنز", symbol: "Mn", atomicNumber: 25, atomicWeight: 54.938, isotopes: ["Mn-55"] },
+        { name: "آهن", symbol: "Fe", atomicNumber: 26, atomicWeight: 55.845, isotopes: ["Fe-54", "Fe-56", "Fe-57", "Fe-58"] },
+        { name: "کوبالت", symbol: "Co", atomicNumber: 27, atomicWeight: 58.933, isotopes: ["Co-59"] },
+        { name: "نیکل", symbol: "Ni", atomicNumber: 28, atomicWeight: 58.693, isotopes: ["Ni-58", "Ni-60", "Ni-61", "Ni-62", "Ni-64"] },
+        { name: "مس", symbol: "Cu", atomicNumber: 29, atomicWeight: 63.546, isotopes: ["Cu-63", "Cu-65"] },
+        { name: "روی", symbol: "Zn", atomicNumber: 30, atomicWeight: 65.38, isotopes: ["Zn-64", "Zn-66", "Zn-67", "Zn-68", "Zn-70"] },
+        { name: "گالیم", symbol: "Ga", atomicNumber: 31, atomicWeight: 69.723, isotopes: ["Ga-69", "Ga-71"] },
+        { name: "ژرمانیوم", symbol: "Ge", atomicNumber: 32, atomicWeight: 72.63, isotopes: ["Ge-70", "Ge-72", "Ge-73", "Ge-74", "Ge-76"] },
+        { name: "آرسنیک", symbol: "As", atomicNumber: 33, atomicWeight: 74.922, isotopes: ["As-75"] },
+        { name: "سلنیم", symbol: "Se", atomicNumber: 34, atomicWeight: 78.971, isotopes: ["Se-74", "Se-76", "Se-77", "Se-78", "Se-80", "Se-82"] },
+        { name: "برم", symbol: "Br", atomicNumber: 35, atomicWeight: 79.904, isotopes: ["Br-79", "Br-81"] },
+        { name: "کریپتون", symbol: "Kr", atomicNumber: 36, atomicWeight: 83.798, isotopes: ["Kr-78", "Kr-80", "Kr-82", "Kr-83", "Kr-84", "Kr-86"] },
+        { name: "روبیدیم", symbol: "Rb", atomicNumber: 37, atomicWeight: 85.468, isotopes: ["Rb-85", "Rb-87"] },
+        { name: "استرانسیم", symbol: "Sr", atomicNumber: 38, atomicWeight: 87.62, isotopes: ["Sr-84", "Sr-86", "Sr-87", "Sr-88"] },
+        { name: "ایتریم", symbol: "Y", atomicNumber: 39, atomicWeight: 88.906, isotopes: ["Y-89"] },
+        { name: "زیرکونیم", symbol: "Zr", atomicNumber: 40, atomicWeight: 91.224, isotopes: ["Zr-90", "Zr-91", "Zr-92", "Zr-94", "Zr-96"] },
+        { name: "نیوبیم", symbol: "Nb", atomicNumber: 41, atomicWeight: 92.906, isotopes: ["Nb-93"] },
+        { name: "مولیبدن", symbol: "Mo", atomicNumber: 42, atomicWeight: 95.95, isotopes: ["Mo-92", "Mo-94", "Mo-95", "Mo-96", "Mo-97", "Mo-98"] },
+        { name: "تکنسیم", symbol: "Tc", atomicNumber: 43, atomicWeight: 98, isotopes: ["Tc-98"] },
+        { name: "روتنیم", symbol: "Ru", atomicNumber: 44, atomicWeight: 101.07, isotopes: ["Ru-102", "Ru-104"] },
+        { name: "رودیم", symbol: "Rh", atomicNumber: 45, atomicWeight: 102.90550, isotopes: ["Rh-103"] },
+        { name: "پالادیوم", symbol: "Pd", atomicNumber: 46, atomicWeight: 106.42, isotopes: ["Pd-102", "Pd-104", "Pd-105", "Pd-106"] },
+        { name: "نقره", symbol: "Ag", atomicNumber: 47, atomicWeight: 107.8682, isotopes: ["Ag-107", "Ag-109"] },
+        { name: "کادمیوم", symbol: "Cd", atomicNumber: 48, atomicWeight: 112.414, isotopes: ["Cd-106", "Cd-108", "Cd-110"] },
+        { name: "ایندیم", symbol: "In", atomicNumber: 49, atomicWeight: 114.818, isotopes: ["In-113", "In-115"] },
+        { name: "قلع", symbol: "Sn", atomicNumber: 50, atomicWeight: 118.710, isotopes: ["Sn-112", "Sn-114", "Sn-116", "Sn-117"] },
+        { name: "آنتیموان", symbol: "Sb", atomicNumber: 51, atomicWeight: 121.76, isotopes: ["Sb-121", "Sb-123"] },
+        { name: "تلوریوم", symbol: "Te", atomicNumber: 52, atomicWeight: 127.60, isotopes: ["Te-120", "Te-122", "Te-123", "Te-124", "Te-126"] },
+        { name: "ید", symbol: "I", atomicNumber: 53, atomicWeight: 126.904, isotopes: ["I-127", "I-131"] },
+        { name: "زنون", symbol: "Xe", atomicNumber: 54, atomicWeight: 131.293, isotopes: ["Xe-124", "Xe-126", "Xe-128", "Xe-129", "Xe-130", "Xe-131", "Xe-132", "Xe-134", "Xe-136"] },
+        { name: "سزیم", symbol: "Cs", atomicNumber: 55, atomicWeight: 132.905, isotopes: ["Cs-133"] },
+        { name: "باریم", symbol: "Ba", atomicNumber: 56, atomicWeight: 137.327, isotopes: ["Ba-130", "Ba-132", "Ba-134", "Ba-135", "Ba-136", "Ba-137", "Ba-138"] },
+        { name: "لانتان", symbol: "La", atomicNumber: 57, atomicWeight: 138.905, isotopes: ["La-138"] },
+        { name: "سریم", symbol: "Ce", atomicNumber: 58, atomicWeight: 140.116, isotopes: ["Ce-140", "Ce-142", "Ce-143", "Ce-144"] },
+        { name: "پرازئودیمیم", symbol: "Pr", atomicNumber: 59, atomicWeight: 140.907, isotopes: ["Pr-141"] },
+        { name: "نئودیمیوم", symbol: "Nd", atomicNumber: 60, atomicWeight: 144.242, isotopes: ["Nd-144", "Nd-145", "Nd-146", "Nd-148", "Nd-150"] },
+        { name: "پرومتیم", symbol: "Pm", atomicNumber: 61, atomicWeight: 145, isotopes: ["Pm-145", "Pm-147"] },
+        { name: "ساماریوم", symbol: "Sm", atomicNumber: 62, atomicWeight: 150.36, isotopes: ["Sm-144", "Sm-147", "Sm-148", "Sm-149", "Sm-150"] },
+        { name: "یوروپیوم", symbol: "Eu", atomicNumber: 63, atomicWeight: 151.964, isotopes: ["Eu-151", "Eu-153"] },
+        { name: "گادولینیوم", symbol: "Gd", atomicNumber: 64, atomicWeight: 157.25, isotopes: ["Gd-152", "Gd-154", "Gd-155", "Gd-156", "Gd-157", "Gd-158"] },
+        { name: "تربیم", symbol: "Tb", atomicNumber: 65, atomicWeight: 158.925, isotopes: ["Tb-159"] },
+        { name: "دیسپروزیوم", symbol: "Dy", atomicNumber: 66, atomicWeight: 162.500, isotopes: ["Dy-156", "Dy-158", "Dy-160", "Dy-161", "Dy-162", "Dy-163"] },
+        { name: "هولمیوم", symbol: "Ho", atomicNumber: 67, atomicWeight: 164.930, isotopes: ["Ho-165"] },
+        { name: "ایتریم", symbol: "Er", atomicNumber: 68, atomicWeight: 167.259, isotopes: ["Er-162", "Er-167", "Er-168", "Er-170"] },
+        { name: "تولیم", symbol: "Tm", atomicNumber: 69, atomicWeight: 168.934, isotopes: ["Tm-169"] },
+        { name: "یترابیوم", symbol: "Yb", atomicNumber: 70, atomicWeight: 173.04, isotopes: ["Yb-170", "Yb-171", "Yb-172", "Yb-173", "Yb-174", "Yb-175", "Yb-176"] },
+        { name: "لوتیوم", symbol: "Lu", atomicNumber: 71, atomicWeight: 174.9668, isotopes: ["Lu-175", "Lu-176"] }, 
+        { name: "هافنیم", symbol: "Hf", atomicNumber: 72, atomicWeight: 178.49, isotopes: ["Hf-174", "Hf-176", "Hf-177", "Hf-178", "Hf-179", "Hf-180"] ,},
+        { name: "تانتال", symbol: "Ta", atomicNumber: 73, atomicWeight: 180.947, isotopes: ["Ta-180", "Ta-181", "Ta-182", "Ta-183"] },
+        { name: "تنگستن", symbol: "W", atomicNumber: 74, atomicWeight: 183.84, isotopes: ["W-182", "W-183", "W-184", "W-186"] },
+        { name: "رنیم", symbol: "Re", atomicNumber: 75, atomicWeight: 186.207, isotopes: ["Re-185", "Re-187"] },
+        { name: "اسمیم", symbol: "Os", atomicNumber: 76, atomicWeight: 190.23, isotopes: ["Os-184", "Os-186", "Os-187", "Os-188", "Os-189", "Os-190"] },
+        { name: "ایریدیم", symbol: "Ir", atomicNumber: 77, atomicWeight: 192.217, isotopes: ["Ir-191", "Ir-193"] },
+        { name: "پلاتین", symbol: "Pt", atomicNumber: 78, atomicWeight: 195.084, isotopes: ["Pt-194", "Pt-195", "Pt-196", "Pt-198"] },
+        { name: "طلا", symbol: "Au", atomicNumber: 79, atomicWeight: 196.967, isotopes: ["Au-197"] },
+        { name: "جیوه", symbol: "Hg", atomicNumber: 80, atomicWeight: 200.592, isotopes: ["Hg-196", "Hg-198", "Hg-199", "Hg-200", "Hg-201", "Hg-202", "Hg-204"] },
+        { name: "تالیم", symbol: "Tl", atomicNumber: 81, atomicWeight: 204.38, isotopes: ["Tl-203", "Tl-205"] },
+        { name: "سرب", symbol: "Pb", atomicNumber: 82, atomicWeight: 207.2, isotopes: ["Pb-204", "Pb-206", "Pb-207", "Pb-208"] },
+        { name: "بیسموت", symbol: "Bi", atomicNumber: 83, atomicWeight: 208.980, isotopes: ["Bi-209"] },
+        { name: "پولونیوم", symbol: "Po", atomicNumber: 84, atomicWeight: 209, isotopes: ["Po-210"] },
+        { name: "آستاتین", symbol: "At", atomicNumber: 85, atomicWeight: 210, isotopes: ["At-210"] },
+        { name: "رادون", symbol: "Rn", atomicNumber: 86, atomicWeight: 222, isotopes: ["Rn-222"] },
+        { name: "فرانسیوم", symbol: "Fr", atomicNumber: 87, atomicWeight: [223], isotopes: ["Fr-223"] },
+        { name: "رادیم", symbol: "Ra", atomicNumber: 88, atomicWeight: 226, isotopes: ["Ra-226"] },
+        { name: "اکتینیم", symbol: "Ac", atomicNumber: 89, atomicWeight: 227, isotopes: ["Ac-227"] },
+        { name: "توریم", symbol: "Th", atomicNumber: 90, atomicWeight: 232.038, isotopes: ["Th-232"] },
+        { name: "پروتاکتیوم", symbol: "Pa", atomicNumber: 91, atomicWeight: 231.035, isotopes: ["Pa-231"] },
+        { name: "اورانیوم", symbol: "U", atomicNumber: 92, atomicWeight: 238.028, isotopes: ["U-234", "U-235", "U-238"] },
+        { name: "نپتونیم", symbol: "Np", atomicNumber: 93, atomicWeight: 237, isotopes: ["Np-237"] },
+        { name: "پلوتونیم", symbol: "Pu", atomicNumber: 94, atomicWeight: 244, isotopes: ["Pu-239", "Pu-241"] },
+        { name: "آمریسیم", symbol: "Am", atomicNumber: 95, atomicWeight: 243, isotopes: ["Am-241", "Am-243"] },
+        { name: "کوریم", symbol: "Cm", atomicNumber: 96, atomicWeight: 247, isotopes: ["Cm-243", "Cm-245"] },
+        { name: "برکلیم", symbol: "Bk", atomicNumber: 97, atomicWeight: 247, isotopes: ["Bk-247"] },
+        { name: "کالیفرنیم", symbol: "Cf", atomicNumber: 98, atomicWeight: 251, isotopes: ["Cf-249", "Cf-251"] },
+        { name: "اینشتین", symbol: "Es", atomicNumber: 99, atomicWeight: 252, isotopes: ["Es-252"] },
+        { name: "فرمیوم", symbol: "Fm", atomicNumber: 100, atomicWeight: 257, isotopes: ["Fm-255", "Fm-257"] },
+        { name: "مندلیم", symbol: "Md", atomicNumber: 101, atomicWeight: 258, isotopes: ["Md-256", "Md-258"] },
+        { name: "نوبلیم", symbol: "No", atomicNumber: 102, atomicWeight: 259, isotopes: ["No-259"] },
+        { name: "لورنسیم", symbol: "Lr", atomicNumber: 103, atomicWeight: 262, isotopes: ["Lr-262"] },
+        { name: "رادیم", symbol: "Rf", atomicNumber: 104, atomicWeight: 267, isotopes: ["Rf-267"] },
+        { name: "دوبنیوم", symbol: "Db", atomicNumber: 105, atomicWeight: 268, isotopes: ["Db-268"] },
+        { name: "سگی", symbol: "Sg", atomicNumber: 106, atomicWeight: 271, isotopes: ["Sg-271"] },
+        { name: "بوهریم", symbol: "Bh", atomicNumber: 107, atomicWeight: 270, isotopes: ["Bh-270"] },
+        { name: "هسیم", symbol: "Hs", atomicNumber: 108, atomicWeight: 277, isotopes: ["Hs-277"] },
+        { name: "مینتالیم", symbol: "Mt", atomicNumber: 109, atomicWeight: 276, isotopes: ["Mt-276"] },
+        { name: "دانتونیوم", symbol: "Ds", atomicNumber: 110, atomicWeight: 281, isotopes: ["Ds-281"] },
+        { name: "رگیوم", symbol: "Rg", atomicNumber: 111, atomicWeight: 280, isotopes: ["Rg-280"] },
+        { name: "کپی", symbol: "Cn", atomicNumber: 112, atomicWeight: 285, isotopes: ["Cn-285"] },
+        { name: "نیهونیوم", symbol: "Nh", atomicNumber: 113, atomicWeight: 286, isotopes: ["Nh-286"] },
+        { name: "فلر", symbol: "Fl", atomicNumber: 114, atomicWeight: 289, isotopes: ["Fl-289"] },
+        { name: "ماینسکی", symbol: "Mc", atomicNumber: 115, atomicWeight: 288, isotopes: ["Mc-288"] },
+        { name: "لورنسیم", symbol: "Lv", atomicNumber: 116, atomicWeight: 293, isotopes: ["Lv-293"] },
+        { name: "تنیسن", symbol: "Ts", atomicNumber: 117, atomicWeight: 294, isotopes: ["Ts-294"] },
+        { name: "اوگانسون", symbol: "Og", atomicNumber: 118, atomicWeight: 294, isotopes: ["Og-294"] },
+
+
+
+        
+        
+
+        // سایر عناصر را اضافه کنید...
+    ];
+
+    function searchElement() {
+        const input = document.getElementById('search').value.trim();
+        const elementInfo = document.getElementById('element-info');
+        const nameElement = document.getElementById('name');
+        const symbolElement = document.getElementById('symbol');
+        const atomicNumberElement = document.getElementById('atomic-number');
+        const atomicWeightElement = document.getElementById('atomic-weight');
+        const isotopesElement = document.getElementById('isotopes');
+
+        const searchByNumber = /^\d+$/.test(input);
+        const searchByNameOrSymbol = elements.find(element => element.name === input || element.symbol === input);
+
+        let result;
+        if (searchByNumber) {
+            const atomicNumber = parseInt(input);
+            result = elements.find(element => element.atomicNumber === atomicNumber);
+        } else {
+            result = searchByNameOrSymbol;
+        }
+
+        if (result) {
+            nameElement.innerText = `نام: ${result.name}`;
+            symbolElement.innerText = `نماد: ${result.symbol}`;
+            atomicNumberElement.innerText = `عدد اتمی: ${result.atomicNumber}`;
+            atomicWeightElement.innerText = `وزن اتمی: ${result.atomicWeight}`;
+            isotopesElement.innerText = `ایزوتوپ‌ها: ${result.isotopes.join(', ')}`;
+            elementInfo.style.display = 'block';
+        } else {
+            elementInfo.style.display = 'none';
+            alert('عنصر مورد نظر پیدا نشد!');
+        }
+    }
+</script>
+
+</body>
+</html>
